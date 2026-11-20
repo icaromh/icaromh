@@ -17,6 +17,13 @@ Currently at [Perk](https://perk.com) — previously at [Kiwi.com](https://www.k
 
 ---
 
+### Latest Writing
+
+<!-- BLOG-POST-LIST:START -->
+<!-- BLOG-POST-LIST:END -->
+
+---
+
 ### Focus & Tools
 
 - **Core:** TypeScript, JavaScript, React, Next.js, Astro, Node.js
