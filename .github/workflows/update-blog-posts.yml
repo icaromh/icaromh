@@ -2,8 +2,8 @@ name: Update Latest Blog Posts
 
 on:
   schedule:
-    # Runs daily at 08:00 UTC
-    - cron: "0 8 * * *"
+    # Runs weekly on Mondays at 08:00 UTC
+    - cron: "0 8 * * 1"
   workflow_dispatch:
 
 permissions:
