@@ -20,6 +20,10 @@ Currently at [Perk](https://perk.com) — previously at [Kiwi.com](https://www.k
 ### Latest Writing
 
 <!-- BLOG-POST-LIST:START -->
+- [the camera filter everyone asks me about](https://icaromh.com/blog/the-camera-filter-everyone-asks-me-about/) — *Nov 18, 2026*
+- [Apps I use on my mac](https://icaromh.com/blog/apps-i-use-on-my-mac/) — *Nov 17, 2026*
+- [Newsletters in my inbox @ 2026](https://icaromh.com/blog/newsletters-2026/) — *Nov 17, 2026*
+- [Hello World: Building a Minimalist Home at icaromh.com](https://icaromh.com/blog/hello-world-welcome-to-icaromh-com/) — *Nov 16, 2026*
 <!-- BLOG-POST-LIST:END -->
 
 ---
