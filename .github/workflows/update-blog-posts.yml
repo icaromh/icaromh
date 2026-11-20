@@ -1,0 +1,84 @@
+name: Update Latest Blog Posts
+
+on:
+  schedule:
+    # Runs daily at 08:00 UTC
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update README with latest RSS posts
+        run: |
+          python3 - <<'PY'
+          import email.utils
+          import re
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          FEED_URL = "https://icaromh.com/rss.xml"
+          MAX_POSTS = 5
+          START_MARKER = "<!-- BLOG-POST-LIST:START -->"
+          END_MARKER = "<!-- BLOG-POST-LIST:END -->"
+
+          req = urllib.request.Request(
+              FEED_URL,
+              headers={"User-Agent": "icaromh-profile-readme-updater/1.0"},
+          )
+          with urllib.request.urlopen(req, timeout=20) as resp:
+              xml_data = resp.read()
+
+          root = ET.fromstring(xml_data)
+          items = root.findall("./channel/item")[:MAX_POSTS]
+
+          lines = []
+          for item in items:
+              title = (item.findtext("title") or "").strip()
+              link = (item.findtext("link") or "").strip()
+              pub_date = (item.findtext("pubDate") or "").strip()
+              if not title or not link:
+                  continue
+              safe_title = title.replace("[", "\\[").replace("]", "\\]")
+              date_suffix = ""
+              if pub_date:
+                  try:
+                      dt = email.utils.parsedate_to_datetime(pub_date)
+                      date_suffix = f" — *{dt.strftime('%b %-d, %Y')}*"
+                  except Exception:
+                      pass
+              lines.append(f"- [{safe_title}]({link}){date_suffix}")
+
+          readme_path = Path("README.md")
+          content = readme_path.read_text(encoding="utf-8")
+          replacement = f"{START_MARKER}\n" + "\n".join(lines) + f"\n{END_MARKER}"
+          pattern = re.compile(
+              re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
+              re.DOTALL,
+          )
+          updated, count = pattern.subn(replacement, content, count=1)
+          if count != 1:
+              raise RuntimeError("Could not find BLOG-POST-LIST markers in README.md")
+
+          readme_path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet README.md; then
+            echo "No changes to README.md"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: update latest blog posts from RSS"
+          git push
